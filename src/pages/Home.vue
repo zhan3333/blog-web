@@ -231,6 +231,15 @@
           }
         ]
       }
+    },
+    created () {
+      this.request.post('blog/index')
+        .then((data) => {
+          console.log(data)
+        })
+        .catch((err) => {
+          console.error(err)
+        })
     }
   }
 </script>
