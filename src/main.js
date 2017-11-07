@@ -5,12 +5,15 @@ import App from './App'
 import router from './router'
 import ElementUi from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import * as request from 'lib/request'
+import request from './lib/request'
 
 Vue.config.productionTip = false
 
 Vue.use(ElementUi)
+
 Vue.prototype.request = request
+
+console.log(request)
 
 /* eslint-disable no-new */
 new Vue({

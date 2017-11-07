@@ -4,8 +4,8 @@
       <el-header style="background-color: #fff; margin-bottom: 20px; height: 48px">
         <el-row type="flex" justify="end">
           <el-col :span="20"></el-col>
-          <el-col :span="1">登陆</el-col>
-          <el-col :span="1">注册</el-col>
+          <el-col :span="1"><span @click="loginDialogFormVisible = true">登陆</span></el-col>
+          <el-col :span="1"><span @click="registerDialogFormVisible = true">注册</span></el-col>
         </el-row>
       </el-header>
       <el-container>
@@ -16,13 +16,13 @@
           <!--发布博客部分-->
           <el-row style="background-color: #fff; border-radius: 2px;">
             <el-col>
-              <el-form style="margin: 10px;">
+              <el-form :model="form" style="margin: 10px;">
                 <div style="text-align: left; padding: 4px; font-size: 18px; color: #1b7fb6">发布博客</div>
                 <el-form-item>
-                  <el-input type="textarea"></el-input>
+                  <el-input v-model="form.blog_content" type="textarea"></el-input>
                 </el-form-item>
                 <el-form-item style="text-align: right">
-                  <el-button size="mini" round>发布</el-button>
+                  <el-button @click="submit_blog" size="mini" round>发布</el-button>
                 </el-form-item>
               </el-form>
             </el-col>
@@ -83,6 +83,42 @@
         footer
       </el-footer>
     </el-container>
+    <!--登陆弹出框-->
+    <el-dialog title="登陆" :visible.sync="loginDialogFormVisible">
+      <el-form :model="login_form">
+        <el-form-item label="邮箱">
+          <el-input v-model="login_form.email" auto-complete="on" placeholder="请输入邮箱"></el-input>
+        </el-form-item>
+        <el-form-item label="密码">
+          <el-input v-model="login_form.password" type="password" auto-complete="on" placeholder="请输入密码"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="loginDialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="login">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!--注册弹出框-->
+    <el-dialog title="注册" :visible.sync="registerDialogFormVisible">
+      <el-form :model="register_form">
+        <el-form-item label="用户名">
+          <el-input v-model="register_form.username" placeholder="请输入用户名"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱">
+          <el-input v-model="register_form.email" placeholder="请输入邮箱"></el-input>
+        </el-form-item>
+        <el-form-item label="密码">
+          <el-input v-model="register_form.password" type="password" placeholder="请输入密码"></el-input>
+        </el-form-item>
+        <el-form-item label="重复密码">
+          <el-input v-model="register_form.repeat_password" type="password" placeholder="请再次输入密码"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="registerDialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="register">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -229,7 +265,22 @@
               name: 'zhan'
             }
           }
-        ]
+        ],
+        form: {
+          blog_content: ''
+        },
+        login_form: {
+          email: '',
+          password: ''
+        },
+        register_form: {
+          username: '',
+          email: '',
+          password: '',
+          repeat_password: ''
+        },
+        loginDialogFormVisible: false,
+        registerDialogFormVisible: false
       }
     },
     created () {
@@ -240,6 +291,28 @@
         .catch((err) => {
           console.error(err)
         })
+    },
+    methods: {
+      submit_blog () {
+        /**
+         * 提交博客表单数据
+         */
+        console.log('blog_submit!')
+      },
+      login () {
+        /**
+         * 登陆操作
+         */
+        console.log('login')
+        this.loginDialogFormVisible = false
+      },
+      register () {
+        /**
+         * 注册操作
+         */
+        console.log('register')
+        this.registerDialogFormVisible = false
+      }
     }
   }
 </script>
