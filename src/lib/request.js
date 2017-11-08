@@ -9,21 +9,26 @@ let post = (api, data) => {
     fetch(requestUrl, {
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
-        Authorization: 'Bearer ' + localStorage.getItem('token') || '',
+        Authorization: localStorage.getItem('token') || '',
         'Content-Type': 'application/json'
       },
       method: 'POST',
+      mode: 'cors',
+      credentials: 'include',
       body: JSON.stringify(data)
     })
       .then((response) => {
-        console.log(response, response.headers)
+        // 处理登陆后的token
+        if (response.headers.get('authorization')) {
+          localStorage.setItem('token', response.headers.get('authorization'))
+        }
         return response.json()
       })
       .then((json) => {
+        console.log('post api: ' + api, data, json)
         if ('' + json.code !== '0') {
           reject(json)
         } else {
-          console.log('json', json)
           resolve(json.data)
         }
       })
@@ -39,20 +44,27 @@ let get = (api, data) => {
     fetch(requestUrl, {
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
-        Authorization: 'Bearer ' + localStorage.getItem('token') || '',
+        Authorization: localStorage.getItem('token') || '',
         'Content-Type': 'application/json'
       },
       method: 'GET',
+      mode: 'cors',
+      credentials: 'include',
       body: JSON.stringify(data)
     })
       .then((response) => {
+        // 处理登陆后的token
+        if (response.headers.get('authorization')) {
+          localStorage.setItem('token', response.headers.get('authorization'))
+        }
         return response.json()
       })
       .then((json) => {
+        console.log('get api: ' + api, data, json)
         if ('' + json.code !== '0') {
           reject(json)
         } else {
-          resolve(json.result || {})
+          resolve(json.data)
         }
       })
       .catch((error) => {

@@ -1,89 +1,92 @@
 <template>
   <div>
-    <el-container>
-      <el-header style="background-color: #fff; margin-bottom: 20px; height: 48px">
-        <el-row type="flex" justify="end">
-          <el-col :span="20"></el-col>
-          <el-col :span="1"><span @click="loginDialogFormVisible = true">登陆</span></el-col>
-          <el-col :span="1"><span @click="registerDialogFormVisible = true">注册</span></el-col>
+    <el-row>
+      <el-col>
+        <!--header-->
+        <el-row style="background-color: #fff; margin-bottom: 20px; height: 48px" type="flex" justify="center">
+          <el-col style="margin: auto">
+            <el-row type="flex" justify="end" :gutter="40">
+              <el-col :span="2" :offset="20"><span @click="loginDialogFormVisible = true">登陆</span></el-col>
+              <el-col :span="2"><span @click="registerDialogFormVisible = true">注册</span></el-col>
+            </el-row>
+          </el-col>
         </el-row>
-      </el-header>
-      <el-container>
-        <!--左边栏-->
-        <el-aside width="400px"></el-aside>
-        <!--中间栏-->
-        <el-main style="padding: 0px 20px">
-          <!--发布博客部分-->
-          <el-row style="background-color: #fff; border-radius: 2px;">
-            <el-col>
-              <el-form :model="form" style="margin: 10px;">
-                <div style="text-align: left; padding: 4px; font-size: 18px; color: #1b7fb6">发布博客</div>
-                <el-form-item>
-                  <el-input v-model="form.blog_content" type="textarea"></el-input>
-                </el-form-item>
-                <el-form-item style="text-align: right">
-                  <el-button @click="submit_blog" size="mini" round>发布</el-button>
-                </el-form-item>
-              </el-form>
-            </el-col>
-          </el-row>
-          <!--博客列表-->
-          <el-row v-for="blog in blog_list" style="margin: 20px 0px">
-            <el-col>
-              <el-card :body-style="{padding: '10px'}">
-                <div slot="header">
-                  <el-row :gutter="40" align="middle">
-                    <!--头像-->
-                    <el-col :span="4">
-                      <img src="../../static/default.jpeg" height="100px" width="100px" style="border-radius: 50%">
-                    </el-col>
-                    <!--用户信息-->
-                    <el-col :span="20" style="height: 100px">
-                      <el-row>
-                        <el-col class="main-user-name">
-                          <!--{{blog.user_info.name}}-->
-                          没有名字
-                        </el-col>
-                      </el-row>
-                      <el-row>
-                        <el-col class="main-blog-crated-at">
-                          {{blog.created_at}}
-                        </el-col>
-                      </el-row>
-                      <el-row>
-                        <el-col class="main-blog-title">
-                          {{blog.title}}
-                        </el-col>
-                      </el-row>
-                    </el-col>
-                  </el-row>
+        <!--body-->
+        <el-row>
+          <!--中间栏-->
+          <el-col style="padding: 0px 20px; min-width: 700px;" :span="16" :offset="4" >
+            <!--发布博客部分-->
+            <el-row style="background-color: #fff; border-radius: 2px;">
+              <el-col>
+                <el-form :model="blog_form" style="margin: 10px;" ref="blog_form" :rules="blogFormRules">
+                  <div style="text-align: left; padding: 4px; font-size: 18px; color: #1b7fb6">发布博客</div>
+                  <el-form-item prop="title">
+                    <el-input v-model="blog_form.title" size="mini" placeholder="标题"></el-input>
+                  </el-form-item>
+                  <el-form-item prop="content">
+                    <el-input v-model="blog_form.content" autosize type="textarea" placeholder="内容"></el-input>
+                  </el-form-item>
+                  <el-form-item style="text-align: right">
+                    <el-button @click="submitForm('blog_form')" size="mini" round>发布</el-button>
+                  </el-form-item>
+                </el-form>
+              </el-col>
+            </el-row>
+            <!--博客列表-->
+            <el-row v-for="blog in blog_list" style="margin: 20px 0px">
+              <el-col>
+                <el-card :body-style="{padding: '10px'}">
+                  <div slot="header">
+                    <el-row :gutter="40" align="middle">
+                      <!--头像-->
+                      <el-col :span="4">
+                        <img src="../../static/default.jpeg" height="100px" width="100px" style="border-radius: 50%">
+                      </el-col>
+                      <!--用户信息-->
+                      <el-col :span="20" style="height: 100px">
+                        <el-row>
+                          <el-col class="main-user-name">
+                            {{blog.user_name}}
+                          </el-col>
+                        </el-row>
+                        <el-row>
+                          <el-col class="main-blog-crated-at">
+                            {{blog.created_at}}
+                          </el-col>
+                        </el-row>
+                        <el-row>
+                          <el-col class="main-blog-title" @click="click_blog(blog.id)">
+                            {{blog.title}}
+                          </el-col>
+                        </el-row>
+                      </el-col>
+                    </el-row>
+                  </div>
+                  <!--博客正文-->
+                  <div style="text-align: left" @click="click_blog(blog.id)">
+                    {{blog.content}}
+                  </div>
+                </el-card>
+              </el-col>
+            </el-row>
+          </el-col>
+          <!--右边栏-->
+          <el-col :span="4">
+            <el-row style="margin-right: 20px; width: 230px; border-radius: 2px;">
+              <el-col>
+                <div style="height: 75px; background-image: url(../../static/background.jpg)">
+                  <img src="../../static/default.jpeg"
+                       style="border-radius: 50%; height: 100px; width: 100px; margin-top: 10px;">
+                  <div style="color: #333; font-size: 14px;font-weight: bold;">{{self_info.name}}</div>
                 </div>
-                <!--博客正文-->
-                <div style="text-align: left">
-                  {{blog.content}}
-                </div>
-              </el-card>
-            </el-col>
-          </el-row>
-        </el-main>
-        <!--右边栏-->
-        <el-aside width="600px">
-          <el-row style="margin-right: 20px; width: 230px; border-radius: 2px;">
-            <el-col>
-              <div style="height: 75px; background-image: url(../../static/background.jpg)">
-                <img src="../../static/default.jpeg"
-                     style="border-radius: 50%; height: 100px; width: 100px; margin-top: 10px;">
-                <div style="color: #333; font-size: 14px;font-weight: bold;">用户姓名</div>
-              </div>
-              <div style="height: 90px; background-color: #fff"></div>
-            </el-col>
-          </el-row>
-        </el-aside>
-      </el-container>
-      <el-footer>
-        footer
-      </el-footer>
-    </el-container>
+                <div style="height: 90px; background-color: #fff"></div>
+              </el-col>
+            </el-row>
+          </el-col>
+        </el-row>
+      </el-col>
+
+    </el-row>
     <!--登陆弹出框-->
     <el-dialog title="登陆" :visible.sync="loginDialogFormVisible">
       <el-form :model="login_form" :rules="loginFormRules" ref="login_form">
@@ -120,6 +123,17 @@
         <el-button type="primary" @click="submitForm('register_form')">确 定</el-button>
       </div>
     </el-dialog>
+    <!--博客详情弹出框-->
+    <el-dialog :title="open_blog_info.title" :visible.sync="blogInfoDialogFormVisible">
+      <el-row>
+        <el-col>
+          <div>{{open_blog_info.content}}</div>
+        </el-col>
+      </el-row>
+      <el-row v-for="comment in open_blog_info.comment_list">
+        <el-col>{{comment.content}}</el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
@@ -155,8 +169,14 @@
       }
       return {
         blog_list: [],
-        form: {
-          blog_content: ''
+        self_info: {
+          id: null,
+          name: '',
+          email: ''
+        },
+        blog_form: {
+          content: '',
+          title: ''
         },
         login_form: {
           email: '',
@@ -168,8 +188,25 @@
           password: '',
           repeat_password: ''
         },
+        open_blog_info: {
+          title: '',
+          content: '',
+          user_name: '',
+          created_at: '',
+          comment_list: [
+            {
+              id: null,
+              content: '111'
+            },
+            {
+              id: null,
+              content: '222'
+            }
+          ]
+        },
         loginDialogFormVisible: false,
         registerDialogFormVisible: false,
+        blogInfoDialogFormVisible: false,
         registerFormRules: {
           name: [
             {required: true, message: '请输入用户名', trigger: 'blur'},
@@ -195,19 +232,53 @@
             {required: true, message: '请输入密码', trigger: 'blur'},
             {min: 6, message: '密码最短6位数', trigger: 'blur'}
           ]
+        },
+        blogFormRules: {
+          content: [
+            {min: 6, message: '内容最短6个字符', trigger: 'blur'}
+          ]
         }
       }
     },
     created () {
-      this.request.post('blog/index')
-        .then((data) => {
-          this.blog_list = data
-        })
-        .catch((err) => {
-          console.error(err)
-        })
+      this.flush_blog_list()
+      this.flush_self_info()
     },
     methods: {
+      click_blog (blogId) {
+        console.log('blog id is ' + blogId)
+        this.request.post('blog/show', {id: blogId})
+          .then((data) => {
+            this.open_blog_info = data
+            this.blogInfoDialogFormVisible = true
+          })
+          .catch(() => {
+            this.$message.error('请求数据失败')
+          })
+      },
+      flush_blog_list () {
+        /**
+         * 刷新博客列表
+         */
+        this.request.post('blog/index')
+          .then((data) => {
+            this.blog_list = data
+          })
+          .catch((err) => {
+            console.error(err)
+          })
+      },
+      flush_self_info () {
+        console.log('self_info')
+//        if (!localStorage.getItem('token')) return false
+        this.request.get('user/show')
+          .then((data) => {
+            this.self_info = data
+          })
+          .catch((err) => {
+            console.error(err)
+          })
+      },
       submit_blog () {
         /**
          * 提交博客表单数据
@@ -245,12 +316,39 @@
                 .then((data) => {
                   this.$message.success('登陆成功')
                   this.loginDialogFormVisible = false
+                  this.flush_self_info()
                 })
                 .catch((err) => {
-                  let errInfo = err.error_data
-                  this._.forEach(errInfo, (value, key) => {
-                    this.$message.warning(key + ': ' + value)
-                  })
+                  if (err.error_data) {
+                    let errInfo = err.error_data
+                    this._.forEach(errInfo, (value, key) => {
+                      this.$message.warning(key + ': ' + value)
+                    })
+                  } else {
+                    this.$message.error(err.msg)
+                  }
+                })
+            }
+            if (formName === 'blog_form') {
+              this.request.post('blog/create', this.blog_form)
+              /**
+               * 发布博客
+               */
+                .then((data) => {
+                  this.$message.success('发布成功')
+                  this.blog_form.content = ''
+                  this.blog_form.title = ''
+                  this.flush_blog_list()
+                })
+                .catch((err) => {
+                  if (err.error_data) {
+                    let errInfo = err.error_data
+                    this._.forEach(errInfo, (value, key) => {
+                      this.$message.warning(key + ': ' + value)
+                    })
+                  } else {
+                    this.$message.error(err.msg)
+                  }
                 })
             }
           }
