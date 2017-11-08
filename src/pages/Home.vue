@@ -137,13 +137,41 @@
     </el-dialog>
     <!--博客详情弹出框-->
     <el-dialog :title="open_blog_info.title" :visible.sync="blogInfoDialogFormVisible">
+      <!--博客内容-->
       <el-row>
         <el-col>
           <div>{{open_blog_info.content}}</div>
         </el-col>
       </el-row>
+      <!--博客评论列表-->
       <el-row v-for="comment in open_blog_info.comment_list">
         <el-col>{{comment.content}}</el-col>
+      </el-row>
+      <!--评论分页-->
+      <el-row>
+        <el-col>
+          <div>
+            <el-pagination
+              layout="prev, pager, next"
+              :total="comment_page.total"
+              :page-size="comment_page.length"
+              @current-change="click_blog_info_page">
+            </el-pagination>
+          </div>
+        </el-col>
+      </el-row>
+      <!--发表评论-->
+      <el-row>
+        <el-col>
+          <el-form ref="comment_form" :model="comment_form" :inline="true">
+            <el-form-item>
+              <el-input label="评论" v-model="comment_form.content"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button label="发表">发表</el-button>
+            </el-form-item>
+          </el-form>
+        </el-col>
       </el-row>
     </el-dialog>
   </div>
@@ -186,6 +214,11 @@
           length: 5,
           total: null
         },
+        comment_page: {
+          page: 1,
+          length: 5,
+          total: null
+        },
         self_info: {
           id: null,
           name: '',
@@ -204,6 +237,9 @@
           email: '',
           password: '',
           repeat_password: ''
+        },
+        comment_form: {
+          content: ''
         },
         open_blog_info: {
           title: '',
@@ -262,11 +298,19 @@
       this.flush_self_info()
     },
     methods: {
+      click_blog_info_page (page) {
+        if (this.open_blog_info.id) {
+          this.comment_page.page = page
+          this.click_blog(this.open_blog_info.id)
+        }
+      },
       click_blog (blogId) {
         console.log('blog id is ' + blogId)
-        this.request.post('blog/show', {id: blogId})
+        this.request.post('blog/show', {id: blogId, page: this.comment_page.page, length: this.comment_page.length})
           .then((data) => {
             this.open_blog_info = data
+            this.open_blog_info.comment_list = data.comments.data
+            this.comment_page.total = data.comments.total
             this.blogInfoDialogFormVisible = true
           })
           .catch(() => {
