@@ -69,6 +69,18 @@
                 </el-card>
               </el-col>
             </el-row>
+            <el-row>
+              <el-col>
+                <div>
+                  <el-pagination
+                    layout="prev, pager, next"
+                    :total="blog_page.total"
+                    :page-size="blog_page.length"
+                    @current-change="flush_blog_list">
+                  </el-pagination>
+                </div>
+              </el-col>
+            </el-row>
           </el-col>
           <!--右边栏-->
           <el-col :span="4">
@@ -169,6 +181,11 @@
       }
       return {
         blog_list: [],
+        blog_page: {
+          page: 1,
+          length: 5,
+          total: null
+        },
         self_info: {
           id: null,
           name: '',
@@ -256,13 +273,16 @@
             this.$message.error('请求数据失败')
           })
       },
-      flush_blog_list () {
+      flush_blog_list (page = 1, length = 5) {
         /**
          * 刷新博客列表
          */
-        this.request.post('blog/index')
+        this.request.post('blog/index', {page, length})
           .then((data) => {
-            this.blog_list = data
+            this.blog_list = data.data
+            this.blog_page.length = length
+            this.blog_page.page = page
+            this.blog_page.total = data.total
           })
           .catch((err) => {
             console.error(err)
@@ -278,12 +298,6 @@
           .catch((err) => {
             console.error(err)
           })
-      },
-      submit_blog () {
-        /**
-         * 提交博客表单数据
-         */
-        console.log('blog_submit!')
       },
       submitForm (formName) {
         this.$refs[formName].validate((valid) => {
