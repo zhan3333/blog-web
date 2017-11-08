@@ -6,14 +6,14 @@ import router from './router'
 import ElementUi from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import request from './lib/request'
+import _ from 'lodash'
 
 Vue.config.productionTip = false
 
 Vue.use(ElementUi)
 
 Vue.prototype.request = request
-
-console.log(request)
+Vue.prototype._ = _
 
 /* eslint-disable no-new */
 new Vue({

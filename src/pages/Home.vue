@@ -41,7 +41,8 @@
                     <el-col :span="20" style="height: 100px">
                       <el-row>
                         <el-col class="main-user-name">
-                          {{blog.user_info.name}}
+                          <!--{{blog.user_info.name}}-->
+                          没有名字
                         </el-col>
                       </el-row>
                       <el-row>
@@ -85,38 +86,38 @@
     </el-container>
     <!--登陆弹出框-->
     <el-dialog title="登陆" :visible.sync="loginDialogFormVisible">
-      <el-form :model="login_form">
-        <el-form-item label="邮箱">
+      <el-form :model="login_form" :rules="loginFormRules" ref="login_form">
+        <el-form-item label="邮箱" prop="email">
           <el-input v-model="login_form.email" auto-complete="on" placeholder="请输入邮箱"></el-input>
         </el-form-item>
-        <el-form-item label="密码">
+        <el-form-item label="密码" prop="password">
           <el-input v-model="login_form.password" type="password" auto-complete="on" placeholder="请输入密码"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="loginDialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="login">确 定</el-button>
+        <el-button type="primary" @click="submitForm('login_form')">确 定</el-button>
       </div>
     </el-dialog>
     <!--注册弹出框-->
     <el-dialog title="注册" :visible.sync="registerDialogFormVisible">
-      <el-form :model="register_form">
-        <el-form-item label="用户名">
-          <el-input v-model="register_form.username" placeholder="请输入用户名"></el-input>
+      <el-form :model="register_form" ref="register_form" :rules="registerFormRules">
+        <el-form-item label="用户名" prop="name">
+          <el-input v-model="register_form.name" placeholder="请输入用户名"></el-input>
         </el-form-item>
-        <el-form-item label="邮箱">
+        <el-form-item label="邮箱" prop="email">
           <el-input v-model="register_form.email" placeholder="请输入邮箱"></el-input>
         </el-form-item>
-        <el-form-item label="密码">
+        <el-form-item label="密码" prop="password">
           <el-input v-model="register_form.password" type="password" placeholder="请输入密码"></el-input>
         </el-form-item>
-        <el-form-item label="重复密码">
+        <el-form-item label="重复密码" prop="repeat_password">
           <el-input v-model="register_form.repeat_password" type="password" placeholder="请再次输入密码"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="registerDialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="register">确 定</el-button>
+        <el-button type="primary" @click="submitForm('register_form')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -142,130 +143,18 @@
       ElFooter,
       ElCol},
     data () {
+      let validateRepeatPassword = (rule, value, callback) => {
+        // todo 自定义验证未生效
+        if (value === '') {
+          callback(new Error('请再次输入密码'))
+        } else if (value !== this.register_form.repeat_password) {
+          callback(new Error('两次输入密码不一致!'))
+        } else {
+          callback()
+        }
+      }
       return {
-        blog_list: [
-          {
-            title: '标题',
-            content: '内容',
-            created_at: '2017-10-25 18:27:30',
-            user_id: '1000',
-            user_info: {
-              name: 'zhan'
-            }
-          }, {
-            title: '标题',
-            content: '内容',
-            created_at: '2017-10-25 18:27:30',
-            user_id: '1000',
-            user_info: {
-              name: 'zhan'
-            }
-          }, {
-            title: '标题',
-            content: '内容',
-            created_at: '2017-10-25 18:27:30',
-            user_id: '1000',
-            user_info: {
-              name: 'zhan'
-            }
-          }, {
-            title: '标题',
-            content: '内容',
-            created_at: '2017-10-25 18:27:30',
-            user_id: '1000',
-            user_info: {
-              name: 'zhan'
-            }
-          }, {
-            title: '标题',
-            content: '内容',
-            created_at: '2017-10-25 18:27:30',
-            user_id: '1000',
-            user_info: {
-              name: 'zhan'
-            }
-          }, {
-            title: '标题',
-            content: '内容',
-            created_at: '2017-10-25 18:27:30',
-            user_id: '1000',
-            user_info: {
-              name: 'zhan'
-            }
-          }, {
-            title: '标题',
-            content: '内容',
-            created_at: '2017-10-25 18:27:30',
-            user_id: '1000',
-            user_info: {
-              name: 'zhan'
-            }
-          }, {
-            title: '标题',
-            content: '内容',
-            created_at: '2017-10-25 18:27:30',
-            user_id: '1000',
-            user_info: {
-              name: 'zhan'
-            }
-          }, {
-            title: '标题',
-            content: '内容',
-            created_at: '2017-10-25 18:27:30',
-            user_id: '1000',
-            user_info: {
-              name: 'zhan'
-            }
-          }, {
-            title: '标题',
-            content: '内容',
-            created_at: '2017-10-25 18:27:30',
-            user_id: '1000',
-            user_info: {
-              name: 'zhan'
-            }
-          }, {
-            title: '标题',
-            content: '内容',
-            created_at: '2017-10-25 18:27:30',
-            user_id: '1000',
-            user_info: {
-              name: 'zhan'
-            }
-          }, {
-            title: '标题',
-            content: '内容',
-            created_at: '2017-10-25 18:27:30',
-            user_id: '1000',
-            user_info: {
-              name: 'zhan'
-            }
-          }, {
-            title: '标题',
-            content: '内容',
-            created_at: '2017-10-25 18:27:30',
-            user_id: '1000',
-            user_info: {
-              name: 'zhan'
-            }
-          }, {
-            title: '标题',
-            content: '内容',
-            created_at: '2017-10-25 18:27:30',
-            user_id: '1000',
-            user_info: {
-              name: 'zhan'
-            }
-          }, {
-            title: '标题',
-            content: '内容',
-            created_at: '2017-10-25 18:27:30',
-            user_id: '1000',
-            user_info: {
-              name: 'zhan'
-            }
-          }
-        ],
+        blog_list: [],
         form: {
           blog_content: ''
         },
@@ -274,19 +163,45 @@
           password: ''
         },
         register_form: {
-          username: '',
+          name: '',
           email: '',
           password: '',
           repeat_password: ''
         },
         loginDialogFormVisible: false,
-        registerDialogFormVisible: false
+        registerDialogFormVisible: false,
+        registerFormRules: {
+          name: [
+            {required: true, message: '请输入用户名', trigger: 'blur'},
+            {min: 6, message: '用户名最短4位数', trigger: 'blur'}
+          ],
+          email: [
+            {required: true, message: '请输入邮箱', trigger: 'blur'}
+          ],
+          password: [
+            {required: true, message: '请输入密码', trigger: 'blur'},
+            {min: 6, message: '密码最短6位数', trigger: 'blur'}
+          ],
+          repeat_password: [
+            {min: 6, message: '密码最短6位数', trigger: 'blur'},
+            {validator: validateRepeatPassword, trigger: 'blur'}
+          ]
+        },
+        loginFormRules: {
+          email: [
+            {required: true, message: '请输入邮箱', trigger: 'blur'}
+          ],
+          password: [
+            {required: true, message: '请输入密码', trigger: 'blur'},
+            {min: 6, message: '密码最短6位数', trigger: 'blur'}
+          ]
+        }
       }
     },
     created () {
       this.request.post('blog/index')
         .then((data) => {
-          console.log(data)
+          this.blog_list = data
         })
         .catch((err) => {
           console.error(err)
@@ -299,19 +214,47 @@
          */
         console.log('blog_submit!')
       },
-      login () {
-        /**
-         * 登陆操作
-         */
-        console.log('login')
-        this.loginDialogFormVisible = false
-      },
-      register () {
-        /**
-         * 注册操作
-         */
-        console.log('register')
-        this.registerDialogFormVisible = false
+      submitForm (formName) {
+        this.$refs[formName].validate((valid) => {
+          if (!valid) {
+            this.$message.error('表单未填写完整')
+            return false
+          } else {
+            if (formName === 'register_form') {
+              /**
+               * 注册操作
+               */
+              this.request.post('user/register', this.register_form)
+                .then((data) => {
+                  this.$message.success('注册成功')
+                  this.registerDialogFormVisible = false
+                })
+                .catch((err) => {
+                  let errInfo = err.error_data
+                  this._.forEach(errInfo, (value, key) => {
+                    this.$message.warning(key + ': ' + value)
+                  })
+                })
+            }
+            if (formName === 'login_form') {
+              /**
+               * 登陆操作
+               */
+
+              this.request.post('user/login', this.login_form)
+                .then((data) => {
+                  this.$message.success('登陆成功')
+                  this.loginDialogFormVisible = false
+                })
+                .catch((err) => {
+                  let errInfo = err.error_data
+                  this._.forEach(errInfo, (value, key) => {
+                    this.$message.warning(key + ': ' + value)
+                  })
+                })
+            }
+          }
+        })
       }
     }
   }

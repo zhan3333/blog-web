@@ -16,13 +16,15 @@ let post = (api, data) => {
       body: JSON.stringify(data)
     })
       .then((response) => {
+        console.log(response, response.headers)
         return response.json()
       })
       .then((json) => {
         if ('' + json.code !== '0') {
           reject(json)
         } else {
-          resolve(json.result || {})
+          console.log('json', json)
+          resolve(json.data)
         }
       })
       .catch((error) => {
