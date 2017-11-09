@@ -136,19 +136,24 @@
       </div>
     </el-dialog>
     <!--博客详情弹出框-->
-    <el-dialog :title="open_blog_info.title" :visible.sync="blogInfoDialogFormVisible">
+    <el-dialog :title="open_blog_info.title" :visible.sync="blogInfoDialogFormVisible" style="font-weight: 700;">
       <!--博客内容-->
-      <el-row>
+      <el-row style="text-align: left; border-bottom: 1px solid #D8DCE5; padding: 20px 0; margin-bottom: 20px; font-size: 14px;">
+
         <el-col>
           <div>{{open_blog_info.content}}</div>
         </el-col>
       </el-row>
-      <!--博客评论列表-->
-      <el-row v-for="comment in open_blog_info.comment_list">
-        <el-col>{{comment.content}}</el-col>
+      <el-row>
+        <el-col style="font-size: 15px">评论</el-col>
+      </el-row>
+       <!--博客评论列表-->
+      <el-row v-for="comment in open_blog_info.comment_list" style="text-align: left; font-size: 12px;">
+        <el-col :span="2" :offset="1" style="font-weight: 600;  border-bottom: 1px dashed #DFE4ED; padding: 5px 0;">{{comment.user_name}}</el-col>
+        <el-col :span="21" style=" border-bottom: 1px dashed #DFE4ED; padding: 5px 0;"> : {{comment.content}}</el-col>
       </el-row>
       <!--评论分页-->
-      <el-row>
+      <el-row v-if="comment_page.total_page > 1">
         <el-col>
           <div>
             <el-pagination
@@ -168,7 +173,7 @@
               <el-input label="评论" v-model="comment_form.content"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button label="发表">发表</el-button>
+              <el-button label="发表" @click="submitForm('comment_form', {blog_id: open_blog_info.id})">发表</el-button>
             </el-form-item>
           </el-form>
         </el-col>
@@ -217,7 +222,8 @@
         comment_page: {
           page: 1,
           length: 5,
-          total: null
+          total: null,
+          total_page: null
         },
         self_info: {
           id: null,
@@ -311,6 +317,7 @@
             this.open_blog_info = data
             this.open_blog_info.comment_list = data.comments.data
             this.comment_page.total = data.comments.total
+            this.comment_page.total_page = data.comments.last_page
             this.blogInfoDialogFormVisible = true
           })
           .catch(() => {
@@ -343,7 +350,7 @@
             console.error(err)
           })
       },
-      submitForm (formName) {
+      submitForm (formName, args) {
         this.$refs[formName].validate((valid) => {
           if (!valid) {
             this.$message.error('表单未填写完整')
@@ -397,6 +404,24 @@
                   this.blog_form.content = ''
                   this.blog_form.title = ''
                   this.flush_blog_list()
+                })
+                .catch((err) => {
+                  if (err.error_data) {
+                    let errInfo = err.error_data
+                    this._.forEach(errInfo, (value, key) => {
+                      this.$message.warning(key + ': ' + value)
+                    })
+                  } else {
+                    this.$message.error(err.msg)
+                  }
+                })
+            }
+            if (formName === 'comment_form') {
+              this.request.post('comment/create', {...this.comment_form, blog_id: args.blog_id})
+                .then((data) => {
+                  this.$message.success('评论成功')
+                  this.click_blog(args.blog_id)
+                  this.comment_form.content = ''
                 })
                 .catch((err) => {
                   if (err.error_data) {
